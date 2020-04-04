@@ -1,6 +1,6 @@
-This is the backend for SaveOurFaves.org.
+This is the backend for SaveYourLocal.co.za.
 
-It's a fairly straightforward Django app with Postgres/PostGIS backing it for the 'nearby' queries. You'll also need [the React frontend](https://github.com/mikeyk/saveourfaves-frontend). It also uses `nginx` as the load balancer and file server for the static files/React app.
+It's a fairly straightforward Django app with Postgres/PostGIS backing it for the 'nearby' queries. You'll also need [the React frontend](https://github.com/krsteyn/saveourfaves-frontend). It also uses `nginx` as the load balancer and file server for the static files/React app.
 
 To get this up and running:
 * Install Docker on your machine
