@@ -25,7 +25,7 @@ services:
         depends_on:
             - backend
         volumes:
-        - ./nginx/build/:/usr/local/build/
+        - ../saveourfaves-frontend/build/:/usr/local/build/
         - ../certificates/letsencrypt/:/etc/letsencrypt/
         - ./backend/carebackend/django-static/:/usr/local/django-static/
         - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
