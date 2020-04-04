@@ -7,7 +7,7 @@ fi
 
 domains=(saveyourlocal.co.za www.saveyourlocal.co.za test.saveyourlocal.co.za)
 rsa_key_size=4096
-data_path="../certbot"
+data_path="../certificates"
 email="kornel@saveyourlocal.co.za" # Adding a valid address is strongly recommended
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
