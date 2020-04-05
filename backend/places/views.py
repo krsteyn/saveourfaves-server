@@ -6,17 +6,18 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 
-
 # from django.contrib.gis.measure import Distance
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.measure import D
 from places.models import (
     EmailSubscription,
     Neighborhood,
+    Area,
     Place,
     SubmittedGiftCardLink,
     SubmittedPlace
 )
+
 
 @csrf_protect
 def neighborhood_detail(request):
@@ -35,6 +36,7 @@ def neighborhood_detail(request):
         'moreAvailable': more_available
     })
 
+
 @csrf_protect
 def place_detail(request):
     place_id = request.GET.get('place_id')
@@ -48,14 +50,36 @@ def place_detail(request):
     nearby = []
     if place.geom:
         nearby = Place.objects.filter(
-                Q(geom__distance_lt=(place.geom, D(m=2500))) & (Q(gift_card_url__isnull=False) | Q(email_contact__isnull=False))
-            ).exclude(
-                place_id=place_id
-            ).annotate(
-                distance=Distance('geom', place.geom)
-            ).order_by('distance')[0:9]
+            Q(geom__distance_lt=(place.geom, D(m=2500))) & (
+                    Q(gift_card_url__isnull=False) | Q(email_contact__isnull=False))
+        ).exclude(
+            place_id=place_id
+        ).annotate(
+            distance=Distance('geom', place.geom)
+        ).order_by('distance')[0:9]
 
     return JsonResponse({'place': place.to_json(), 'suggestedPlaces': [x.to_json() for x in nearby]})
+
+
+@csrf_protect
+def places_list(request):
+    all_places = Place.objects.all()
+    return JsonResponse([p.to_typeahead_json() for p in all_places]) @ csrf_protect
+
+
+@csrf_protect
+def neighborhood_list(request):
+    all_output = {}
+    for area in Area.objects.all():
+        matching_hoods = sorted(Neighborhood.objects.filter(area=area), key=_sort_key)
+        output = [x.to_json() for x in matching_hoods]
+        all_output[area.key] = output
+    return JsonResponse(all_output)
+
+
+def _sort_key(neighborhood):
+    return neighborhood.rank or 99
+
 
 @csrf_exempt
 def submit_email_for_place(request):
@@ -110,6 +134,7 @@ def submit_gift_card_link(request):
     submission.save()
     return JsonResponse({'status': 'ok'})
 
+
 @csrf_exempt
 def submit_new_place(request):
     data = json.loads(request.body)
@@ -124,6 +149,7 @@ def submit_new_place(request):
         if url and not url.startswith('http'):
             return 'http://%s/' % url
         return url
+
     gift_card_url = add_url_prefix(gift_card_url)
     donation_url = add_url_prefix(donation_url)
 
