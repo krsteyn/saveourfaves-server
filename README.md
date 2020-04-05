@@ -4,7 +4,6 @@ It's a fairly straightforward Django app with Postgres/PostGIS backing it for th
 
 To get this up and running:
 * Install Docker on your machine
-* Either generate certificates using `letsencrypt` and put the results of `/etc/letsencrypt` in a directory above this one called `certificates` (eg `../certificates/letsencrypt/` or edit `nginx/nginx.conf` to remove the HTTPS/letsencrypt references
 * Generate an `htpasswd` formatted file and place it in `../certificates/nginx_auth` (this is used to password-protect the Django admin site; there’s also Django’s standard auth there, but this adds another optional layer.
 * From the root folder, run `docker-compose up -d`  to bring up `nginx` and `Django`
 * From the `db` folder, run `docker-compose up -d` to bring up `Postgres`
