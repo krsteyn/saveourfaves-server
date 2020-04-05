@@ -6,7 +6,7 @@ services:
             context: ./backend
             dockerfile: Dockerfile
         # We run a pip install to catch cases where requirements were added but a Docker build hasn't run yet
-        command: bash -c "pip install -r requirements.txt && python manage.py collectstatic && python manage.py runserver 0.0.0.0:8000"
+        command: bash -c "pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py runserver 0.0.0.0:8000"
         working_dir: /usr/local/site/
         volumes:
         - ./backend/:/usr/local/site/
