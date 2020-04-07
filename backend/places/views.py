@@ -64,7 +64,8 @@ def place_detail(request):
 @csrf_protect
 def places_list(request):
     all_places = Place.objects.all()
-    return JsonResponse([p.to_typeahead_json() for p in all_places]) @ csrf_protect
+    all_places_json = [p.to_typeahead_json() for p in all_places]
+    return JsonResponse(json.dumps(all_places_json))
 
 
 @csrf_protect
