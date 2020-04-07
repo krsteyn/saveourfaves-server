@@ -65,7 +65,7 @@ def place_detail(request):
 def places_list(request):
     all_places = Place.objects.all()
     all_places_json = [p.to_typeahead_json() for p in all_places]
-    return JsonResponse(json.dumps(all_places_json))
+    return JsonResponse(json.dumps(all_places_json), safe=False)
 
 
 @csrf_protect
