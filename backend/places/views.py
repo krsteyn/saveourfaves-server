@@ -165,6 +165,7 @@ def submit_new_place(request):
         place_name=place_data['structured_formatting']['main_text'],
         place_rough_location=place_data['structured_formatting']['secondary_text'],
         email=email,
+        phone_number=data.get('phone_number'),
         donation_url=donation_url,
         gift_card_url=gift_card_url
     )

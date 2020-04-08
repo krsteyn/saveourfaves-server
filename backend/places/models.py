@@ -26,6 +26,7 @@ class SubmittedPlace(models.Model):
     gift_card_url = models.URLField(null=True, blank=True, max_length=1000)
     donation_url = models.URLField(null=True, blank=True, max_length=1000)
     email = models.EmailField(null=True, blank=True)
+    phone_number = models.TextField(null=True, blank=True)
     place_id = models.TextField()
     matched_place = models.ForeignKey(to='Place', on_delete=models.CASCADE, null=True, blank=True)
     place_name = models.TextField()
@@ -134,6 +135,7 @@ class Place(models.Model):
     address = models.TextField()
     area = models.ForeignKey(to='Area', null=True, blank=True, on_delete=models.SET_NULL)
     email_contact = models.EmailField(null=True, blank=True)
+    phone_number = models.TextField(null=True, blank=True)
     place_url = models.URLField(null=True, blank=True, max_length=1000)
     image_url = models.URLField(null=True, blank=True, max_length=1000)
     image_attribution = models.TextField(null=True, blank=True)
@@ -187,6 +189,7 @@ class Place(models.Model):
             'donationURL': self.donation_url,
             'placeURL': self.place_url,
             'emailContact': self.email_contact,
+            'phoneNumber': self.phone_number,
             'imageURL': self.get_image_url(),
             'placeID': self.place_id,
             'area': self.area.key if self.area else None

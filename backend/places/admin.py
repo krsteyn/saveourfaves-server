@@ -77,6 +77,7 @@ def accept_place(modeladmin, request, queryset, accept_link=True):
             p.gift_card_url = check_link_against_blacklist(suggestion.gift_card_url) or p.gift_card_url
         p.donation_url = p.donation_url or suggestion.donation_url
         p.email_contact = suggestion.email or p.email_contact
+        p.phone_number = suggestion.phone_number or p.phone_number
         p.save()
         suggestion.processed = True
         suggestion.save()
@@ -89,9 +90,14 @@ accept_place.short_description = "Add place, including any gift card link"
 
 class PlacesAdmin(admin.ModelAdmin):
     search_fields = ['name', 'place_id']
+    list_display = ('name', 'email_contact', 'phone_number', 'area', 'gift_card_url')
 
 class EntryAdmin(admin.ModelAdmin):
     autocomplete_fields = ['place']
+
+class NeighborhoodAdmin(admin.ModelAdmin):
+    search_fields = ['name', 'key']
+    list_display = ('area', 'name')
 
 
 class GiftCardSuggestionAdmin(admin.ModelAdmin):
@@ -152,7 +158,7 @@ class EmailSubscriptionAdmin(admin.ModelAdmin):
 
 # Register your models here.
 admin.site.register(Place, PlacesAdmin)
-admin.site.register(Neighborhood)
+admin.site.register(Neighborhood, NeighborhoodAdmin)
 admin.site.register(NeighborhoodEntry, EntryAdmin)
 admin.site.register(EmailSubscription, EmailSubscriptionAdmin)
 admin.site.register(Area)
