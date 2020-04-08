@@ -10,13 +10,14 @@ from django.contrib.gis.geos import Polygon
 import pandas as pd
 from shapely.geometry import Polygon as ShapelyPolygon
 
-insert_if_not_found = sys.argv[3] == 'yes' if len(sys.argv) > 3 else False
+insert_if_not_found = True
+fn = os.path.join(os.path.dirname(__file__), './munic.geojson')
 
-with open('./munic.geojson') as f:
+with open(fn) as f:
     data = json.load(f)
 
 for feature in data["features"]:
-    print("Processing", json.dumps(feature))
+    print("Processing neigherhood >>>> ", feature["properties"]["MUNICNAME"])
     try:
         n = Neighborhood.objects.get(key=feature["id"])
     except Neighborhood.DoesNotExist:
@@ -26,8 +27,14 @@ for feature in data["features"]:
         else:
             print("No DB Key match and not inserting, continuing...")
             continue
-    n.bounds = Polygon(feature)
-    poly = ShapelyPolygon(feature)
+    cords = json.dumps(feature["geometry"]["coordinates"])
+    if cords.startswith('[[['):
+        cords = cords[1:-1]
+    if not cords.startswith('[['):
+        cords = '[%s]' % cords
+    geo_json = json.loads(cords)
+    n.bounds = Polygon(geo_json)
+    poly = ShapelyPolygon(geo_json)
     centroid = poly.centroid
     lat = centroid.y
     lng = centroid.x
