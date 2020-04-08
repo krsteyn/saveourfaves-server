@@ -11,7 +11,6 @@ import pandas as pd
 from shapely.geometry import Polygon as ShapelyPolygon
 
 insert_if_not_found = sys.argv[3] == 'yes' if len(sys.argv) > 3 else False
-area = Area.objects.get(key=area_to_use)
 
 with open('./munic.geojson') as f:
     data = json.load(f)
@@ -34,6 +33,6 @@ for feature in data["features"]:
     lng = centroid.x
     n.lat = lat
     n.lng = lng
-    n.area = feature["properties"]["PROVINCE"]
+    n.area = Area.objects.get(key=feature["properties"]["PROVINCE"])
     n.rank = None
     n.save()
