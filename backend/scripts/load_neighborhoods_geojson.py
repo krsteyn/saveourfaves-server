@@ -10,9 +10,6 @@ from django.contrib.gis.geos import Polygon
 import pandas as pd
 from shapely.geometry import Polygon as ShapelyPolygon
 
-fl = sys.argv[1]
-area_to_use = sys.argv[2]
-
 insert_if_not_found = sys.argv[3] == 'yes' if len(sys.argv) > 3 else False
 area = Area.objects.get(key=area_to_use)
 
