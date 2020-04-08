@@ -19,27 +19,31 @@ with open(fn) as f:
 for feature in data["features"]:
     print("Processing neigherhood >>>> ", feature["properties"]["MUNICNAME"])
     try:
-        n = Neighborhood.objects.get(key=feature["id"])
-    except Neighborhood.DoesNotExist:
-        if insert_if_not_found:
-            n = Neighborhood(name=feature["properties"]["MUNICNAME"])
-            n.key = feature["id"]
-        else:
-            print("No DB Key match and not inserting, continuing...")
-            continue
-    cords = json.dumps(feature["geometry"]["coordinates"])
-    if cords.startswith('[[['):
-        cords = cords[1:-1]
-    if not cords.startswith('[['):
-        cords = '[%s]' % cords
-    geo_json = json.loads(cords)
-    n.bounds = Polygon(geo_json)
-    poly = ShapelyPolygon(geo_json)
-    centroid = poly.centroid
-    lat = centroid.y
-    lng = centroid.x
-    n.lat = lat
-    n.lng = lng
-    n.area = Area.objects.get(key=feature["properties"]["PROVINCE"])
-    n.rank = None
-    n.save()
+        try:
+            n = Neighborhood.objects.get(key=feature["id"])
+        except Neighborhood.DoesNotExist:
+            if insert_if_not_found:
+                n = Neighborhood(name=feature["properties"]["MUNICNAME"])
+                n.key = feature["id"]
+            else:
+                print("No DB Key match and not inserting, continuing...")
+                continue
+        cords = json.dumps(feature["geometry"]["coordinates"])
+        if cords.startswith('[[['):
+            cords = cords[1:-1]
+        if not cords.startswith('[['):
+            cords = '[%s]' % cords
+        geo_json = json.loads(cords)
+        n.bounds = Polygon(geo_json)
+        poly = ShapelyPolygon(geo_json)
+        centroid = poly.centroid
+        lat = centroid.y
+        lng = centroid.x
+        n.lat = lat
+        n.lng = lng
+        n.area = Area.objects.get(key=feature["properties"]["PROVINCE"])
+        n.rank = None
+        n.save()
+    except Exception as e:
+        print("Error processing >>> {} with error >>>>> {}", feature["properties"]["MUNICNAME"], e)
+        continue
