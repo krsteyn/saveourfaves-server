@@ -16,7 +16,7 @@ area_to_use = sys.argv[2]
 insert_if_not_found = sys.argv[3] == 'yes' if len(sys.argv) > 3 else False
 area = Area.objects.get(key=area_to_use)
 
-with open(fl) as f:
+with open('./munic.geojson') as f:
     data = json.load(f)
 
 for feature in data["features"]:
