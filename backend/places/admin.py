@@ -113,8 +113,8 @@ class GiftCardSuggestionAdmin(admin.ModelAdmin):
 class PlaceSuggestionAdmin(admin.ModelAdmin):
     actions = [accept_place, accept_place_reject_link]
 
-    list_display = ('place_name', 'link_matched_place', 'place_rough_location', 'gift_card_url', 'show_existing_gift_card_url', 'donation_url', 'email')
-    list_editable = ('gift_card_url', )
+    list_display = ('place_name', 'link_matched_place', 'place_rough_location', 'gift_card_url', 'show_existing_gift_card_url', 'donation_url', 'email', 'phone_number')
+    list_editable = ('gift_card_url', 'email', 'phone_number')
     list_filter = [NullListFilter]
 
     def link_matched_place(self, obj):
