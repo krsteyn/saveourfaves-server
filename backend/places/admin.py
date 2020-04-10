@@ -115,7 +115,7 @@ class NeighborhoodAdmin(admin.ModelAdmin):
 
 class PreferredProviderAdmin(admin.ModelAdmin):
     search_fields = ['name', 'key']
-    list_display = ('key', 'name')
+    list_display = ('key', 'display_name')
 
 
 class GiftCardSuggestionAdmin(admin.ModelAdmin):
