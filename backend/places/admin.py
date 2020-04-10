@@ -16,8 +16,6 @@ from places.models import (
     SubmittedGiftCardLink,
     PreferredProvider)
 
-from backend.places.models import PreferredProvider
-
 
 class NullListFilter(admin.SimpleListFilter):
     title = "Gift Card Link"
