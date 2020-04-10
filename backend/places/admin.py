@@ -13,7 +13,8 @@ from places.models import (
     EmailSubscription,
     Area,
     SubmittedPlace,
-    SubmittedGiftCardLink)
+    SubmittedGiftCardLink,
+    PreferredProvider)
 
 from backend.places.models import PreferredProvider
 
