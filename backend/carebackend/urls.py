@@ -22,7 +22,8 @@ from places.views import (
     submit_gift_card_link,
     submit_new_place,
     places_list,
-    neighborhood_list
+    neighborhood_list,
+    preferred_provider_list
 )
 
 urlpatterns = [
@@ -31,6 +32,7 @@ urlpatterns = [
     path('api/places/by_neighborhood', neighborhood_detail),
     path('api/places/list', places_list),
     path('api/places/neighborhood/list', neighborhood_list),
+    path('api/places/preferred_provider/list', preferred_provider_list),
     path('api/places/submit_email', submit_email_for_place),
     path('api/places/submit_gift_card_link', submit_gift_card_link),
     path('api/places/submit_new_place', submit_new_place)

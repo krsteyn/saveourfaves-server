@@ -5,6 +5,7 @@ from django.contrib.gis.geos import Point
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.measure import D
 
+
 class EmailSubscription(models.Model):
     email = models.EmailField()
     place = models.ForeignKey(to='Place', on_delete=models.CASCADE)
@@ -13,14 +14,15 @@ class EmailSubscription(models.Model):
     def __str__(self):
         return "%s to %s" % (self.email, self.place.name)
 
-class SubmittedGiftCardLink(models.Model):
 
+class SubmittedGiftCardLink(models.Model):
     link = models.URLField(max_length=1000)
     place = models.ForeignKey(to='Place', on_delete=models.CASCADE)
     date_submitted = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return "%s to %s" % (self.link, self.place.name)
+
 
 class SubmittedPlace(models.Model):
     gift_card_url = models.URLField(null=True, blank=True, max_length=1000)
@@ -33,6 +35,7 @@ class SubmittedPlace(models.Model):
     place_rough_location = models.TextField()
     date_submitted = models.DateTimeField(auto_now_add=True)
     processed = models.BooleanField(default=False)
+    preferred_provided = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return "%s at %s" % (self.place_name, self.place_rough_location)
@@ -44,6 +47,7 @@ class SubmittedPlace(models.Model):
             except Place.DoesNotExist:
                 pass
         super(self.__class__, self).save(*args, **kwargs)
+
 
 class Neighborhood(models.Model):
     name = models.TextField()
@@ -123,6 +127,18 @@ class Area(models.Model):
                 else:
                     places = Place.objects.filter(geom__distance_lt=(n.geom, D(m=5000)))
                 places.update(area=a)
+
+
+class PreferredProvider(models.Model):
+    key = models.TextField(primary_key=True)
+    display_name = models.TextField()
+
+    def to_json(self):
+        return {
+            'key': self.key,
+            'name': self.display_name
+        }
+
 
 # Create your models here.
 class Place(models.Model):

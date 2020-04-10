@@ -15,7 +15,8 @@ from places.models import (
     Area,
     Place,
     SubmittedGiftCardLink,
-    SubmittedPlace
+    SubmittedPlace,
+    PreferredProvider
 )
 
 
@@ -66,6 +67,13 @@ def places_list(request):
     all_places = Place.objects.all()
     all_places_json = [p.to_typeahead_json() for p in all_places]
     return JsonResponse(all_places_json, safe=False)
+
+
+@csrf_protect
+def preferred_provider_list(request):
+    all_providers = PreferredProvider.objects.all()
+    all_providers_json = [p.to_json() for p in all_providers]
+    return JsonResponse(all_providers_json, safe=False)
 
 
 @csrf_protect

@@ -15,21 +15,25 @@ from places.models import (
     SubmittedPlace,
     SubmittedGiftCardLink)
 
+from backend.places.models import PreferredProvider
+
+
 class NullListFilter(admin.SimpleListFilter):
     title = "Gift Card Link"
     parameter_name = "gift_card_url"
 
     def lookups(self, request, model_admin):
         return (
-            ('0', 'Has Link', ),
-            ('1', 'No Link', ),
+            ('0', 'Has Link',),
+            ('1', 'No Link',),
         )
 
     def queryset(self, request, queryset):
         if self.value() in ('0', '1'):
-            kwargs = { '{0}__isnull'.format(self.parameter_name) : self.value() == '1' }
+            kwargs = {'{0}__isnull'.format(self.parameter_name): self.value() == '1'}
             return queryset.filter(**kwargs)
         return queryset
+
 
 def accept_link(modeladmin, request, queryset):
     for suggestion in queryset:
@@ -38,11 +42,17 @@ def accept_link(modeladmin, request, queryset):
             pl.gift_card_url = suggestion.link
             pl.save()
     queryset.delete()
+
+
 accept_link.short_description = "Accept suggested link"
+
 
 def accept_place_reject_link(modeladmin, request, queryset):
     return accept_place(modeladmin, request, queryset, accept_link=False)
+
+
 accept_place_reject_link.short_description = "Add place, but don't add the gift card link"
+
 
 def accept_place(modeladmin, request, queryset, accept_link=True):
     from places.google_places_helper import fetch_details_for_place_id
@@ -86,18 +96,27 @@ def accept_place(modeladmin, request, queryset, accept_link=True):
         # once at the end of an admin action
         Area.update_area_for_all_places()
 
+
 accept_place.short_description = "Add place, including any gift card link"
+
 
 class PlacesAdmin(admin.ModelAdmin):
     search_fields = ['name', 'place_id']
     list_display = ('name', 'email_contact', 'phone_number', 'area', 'gift_card_url')
 
+
 class EntryAdmin(admin.ModelAdmin):
     autocomplete_fields = ['place']
+
 
 class NeighborhoodAdmin(admin.ModelAdmin):
     search_fields = ['name', 'key']
     list_display = ('area', 'name')
+
+
+class PreferredProviderAdmin(admin.ModelAdmin):
+    search_fields = ['name', 'key']
+    list_display = ('key', 'name')
 
 
 class GiftCardSuggestionAdmin(admin.ModelAdmin):
@@ -108,26 +127,33 @@ class GiftCardSuggestionAdmin(admin.ModelAdmin):
         if obj.link:
             return format_html("<a target='_blank' href='{url}'>{url}</a>", url=obj.link)
         return None
+
     show_gift_card_url.admin_order_field = 'link'
+
 
 class PlaceSuggestionAdmin(admin.ModelAdmin):
     actions = [accept_place, accept_place_reject_link]
 
-    list_display = ('place_name', 'link_matched_place', 'place_rough_location', 'gift_card_url', 'show_existing_gift_card_url', 'donation_url', 'email', 'phone_number')
+    list_display = (
+    'place_name', 'link_matched_place', 'place_rough_location', 'gift_card_url', 'show_existing_gift_card_url',
+    'donation_url', 'email', 'phone_number', 'preferred_provider')
     list_editable = ('gift_card_url', 'email', 'phone_number')
     list_filter = [NullListFilter]
 
     def link_matched_place(self, obj):
         if obj.matched_place:
-            return format_html("<a target='_blank' href='/admin/places/place/{place_id}'>{place_name} at {place_address}</a>",
-             place_address=obj.matched_place.address, place_id=obj.place_id, place_name=obj.matched_place.name)
+            return format_html(
+                "<a target='_blank' href='/admin/places/place/{place_id}'>{place_name} at {place_address}</a>",
+                place_address=obj.matched_place.address, place_id=obj.place_id, place_name=obj.matched_place.name)
         return None
+
     link_matched_place.short_description = 'Existing Place'
 
     def show_existing_gift_card_url(self, obj):
         if obj.matched_place and obj.matched_place.gift_card_url:
             return format_html("<a target='_blank' href='{url}'>{url}</a>", url=obj.matched_place.gift_card_url)
         return None
+
     show_existing_gift_card_url.short_description = 'Existing Gift Card URL'
 
     def get_queryset(self, request):
@@ -147,10 +173,13 @@ class PlaceSuggestionAdmin(admin.ModelAdmin):
             blacklist_query
         )
 
+
 class EmailSubscriptionAdmin(admin.ModelAdmin):
     list_display = ('email', 'place', 'show_place_email')
+
     def show_place_email(self, obj):
         return obj.place.email_contact
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.filter(processed=False)
@@ -159,6 +188,7 @@ class EmailSubscriptionAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Place, PlacesAdmin)
 admin.site.register(Neighborhood, NeighborhoodAdmin)
+admin.site.register(PreferredProvider, PreferredProviderAdmin)
 admin.site.register(NeighborhoodEntry, EntryAdmin)
 admin.site.register(EmailSubscription, EmailSubscriptionAdmin)
 admin.site.register(Area)
