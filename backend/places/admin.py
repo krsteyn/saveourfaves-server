@@ -135,7 +135,7 @@ class PlaceSuggestionAdmin(admin.ModelAdmin):
 
     list_display = (
     'place_name', 'link_matched_place', 'place_rough_location', 'gift_card_url', 'show_existing_gift_card_url',
-    'donation_url', 'email', 'phone_number', 'preferred_provider')
+    'donation_url', 'email', 'phone_number', 'preferred_provided')
     list_editable = ('gift_card_url', 'email', 'phone_number')
     list_filter = [NullListFilter]
 
