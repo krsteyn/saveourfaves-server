@@ -73,7 +73,7 @@ def download_csv(queryset, fields, file_name):
     for s in queryset:
         row = []
         for field in fields:
-            row.append(s[field])
+            row.append(getattr(s, field, ''))
         writer.writerow(row)
 
     f.seek(0)
