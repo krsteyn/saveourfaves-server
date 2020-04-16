@@ -34,4 +34,4 @@ RUN set -ex && \
 # copy project
 COPY . /usr/local/site/
 
-CMD bash -c "pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py runserver 0.0.0.0:8000"
+#CMD bash -c "pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py runserver 0.0.0.0:8000"
