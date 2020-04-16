@@ -46,6 +46,42 @@ def accept_link(modeladmin, request, queryset):
 accept_link.short_description = "Accept suggested link"
 
 
+def download_places_csv(modeladmin, request, queryset):
+    return download_csv(queryset, ["name", "email_contact", "phone_number", "area", "gift_card_url"], 'places-info.csv')
+
+
+download_places_csv.short_description = "Download Selected Places"
+
+
+def download_suggested_places_csv(modeladmin, request, queryset):
+    fields = ['place_name', 'place_rough_location', 'gift_card_url', 'donation_url', 'email', 'phone_number',
+              'preferred_provided']
+    return download_csv(queryset, fields, 'suggested-places-info.csv')
+
+
+download_suggested_places_csv.short_description = "Download Selected"
+
+
+def download_csv(queryset, fields, file_name):
+    import csv
+    from django.http import HttpResponse
+    from io import StringIO
+    f = StringIO()
+    writer = csv.writer(f)
+    writer.writerow(fields)
+
+    for s in queryset:
+        row = []
+        for field in fields:
+            row.append(s[field])
+        writer.writerow(row)
+
+    f.seek(0)
+    response = HttpResponse(f, content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename={}'.format(file_name)
+    return response
+
+
 def accept_place_reject_link(modeladmin, request, queryset):
     return accept_place(modeladmin, request, queryset, accept_link=False)
 
@@ -100,6 +136,7 @@ accept_place.short_description = "Add place, including any gift card link"
 
 
 class PlacesAdmin(admin.ModelAdmin):
+    actions = [download_places_csv]
     search_fields = ['name', 'place_id']
     list_display = ('name', 'email_contact', 'phone_number', 'area', 'gift_card_url')
 
@@ -131,11 +168,11 @@ class GiftCardSuggestionAdmin(admin.ModelAdmin):
 
 
 class PlaceSuggestionAdmin(admin.ModelAdmin):
-    actions = [accept_place, accept_place_reject_link]
+    actions = [accept_place, accept_place_reject_link, download_suggested_places_csv]
 
     list_display = (
-    'place_name', 'link_matched_place', 'place_rough_location', 'gift_card_url', 'show_existing_gift_card_url',
-    'donation_url', 'email', 'phone_number', 'preferred_provided')
+        'place_name', 'link_matched_place', 'place_rough_location', 'gift_card_url', 'show_existing_gift_card_url',
+        'donation_url', 'email', 'phone_number', 'preferred_provided')
     list_editable = ('gift_card_url', 'email', 'phone_number')
     list_filter = [NullListFilter]
 
